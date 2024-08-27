@@ -8,11 +8,15 @@ class ScreenshotJob < ApplicationJob
   def perform(goal_id)
     goal = Goal.find(goal_id)
 
-    # 1. set up Selenium
     options = Selenium::WebDriver::Chrome::Options.new
+    options.add_argument('--no-sandbox')
+    options.add_argument('--headless') # if you are running headless
+    options.add_argument('--disable-dev-shm-usage') # Add this for more stability
 
-    driver = Selenium::WebDriver::Chrome.new(options: options, path: '/usr/local/bin/chromedriver')
+    driver = Selenium::WebDriver.for :chrome, options: options
 
+    # 1. set up Selenium
+    
     
     # 2. navigate to your site
     driver.navigate.to goal_url(goal)
@@ -21,7 +25,8 @@ class ScreenshotJob < ApplicationJob
     driver.save_screenshot("screenshotone.png")
     
     # 4. quit Selenium
-    driver.quit  end
+    driver.quit  
+  end
 
     private
 
